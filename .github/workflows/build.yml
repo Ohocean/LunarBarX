@@ -46,6 +46,7 @@ jobs:
           export THEOS="$HOME/theos-rootless"
           set -e
           "$(brew --prefix make)/bin/gmake" clean package FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=rootless
+          rm -rf packages
           n=0; for d in packages/*.deb; do n=$((n+1)); cp -f "$d" "LunarBarX.rootless.$n.deb"; done
 
       - name: Build roothide deb (Relaxin 用这个)
@@ -53,6 +54,7 @@ jobs:
           export THEOS="$HOME/theos-roothide"
           set -e
           "$(brew --prefix make)/bin/gmake" clean package FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=roothide
+          rm -rf packages
           n=0; for d in packages/*.deb; do n=$((n+1)); cp -f "$d" "LunarBarX.roothide.$n.deb"; done
 
       - name: Upload artifacts
