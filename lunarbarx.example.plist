@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Enabled</key>
+	<true/>
+	<key>TwoLine</key>
+	<true/>
+	<key>ShowLunar</key>
+	<true/>
+	<key>ShowDate</key>
+	<true/>
+	<key>ShowWeekday</key>
+	<true/>
+	<key>TimeFormat</key>
+	<string>HH:mm</string>
+	<key>BottomFontSize</key>
+	<real>8</real>
+	<key>BottomOffsetY</key>
+	<real>0</real>
+	<key>DebugLog</key>
+	<false/>
+</dict>
+</plist>

@@ -1,0 +1,67 @@
+name: Build LunarBarX
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: brew install make ldid dpkg
+
+      - name: Cache Theos installations
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/theos-rootless
+            ~/theos-roothide
+          key: theos-${{ runner.os }}-v2
+
+      - name: Prepare Theos (rootless)
+        run: |
+          if [ ! -d "$HOME/theos-rootless" ]; then
+            git clone --depth 1 --recursive https://github.com/theos/theos.git "$HOME/theos-rootless"
+            git clone --depth 1 --filter=blob:none --sparse https://github.com/theos/sdks.git "$RUNNER_TEMP/sdks-a"
+            git -C "$RUNNER_TEMP/sdks-a" sparse-checkout set iPhoneOS16.5.sdk
+            cp -R "$RUNNER_TEMP/sdks-a/iPhoneOS16.5.sdk" "$HOME/theos-rootless/sdks/"
+          fi
+
+      - name: Prepare Theos (roothide)
+        run: |
+          if [ ! -d "$HOME/theos-roothide" ]; then
+            git clone --depth 1 --recursive https://github.com/roothide/theos.git "$HOME/theos-roothide"
+            git clone --depth 1 --filter=blob:none --sparse https://github.com/theos/sdks.git "$RUNNER_TEMP/sdks-b"
+            git -C "$RUNNER_TEMP/sdks-b" sparse-checkout set iPhoneOS16.5.sdk
+            cp -R "$RUNNER_TEMP/sdks-b/iPhoneOS16.5.sdk" "$HOME/theos-roothide/sdks/"
+          fi
+
+      - name: Build rootless deb
+        env:
+          THEOS: ${{ runner.home }}/theos-rootless
+        run: |
+          set -e
+          "$(brew --prefix make)/bin/gmake" clean package FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=rootless
+          cp packages/*_iphoneos-arm*.deb LunarBarX.rootless.deb
+
+      - name: Build roothide deb (Relaxin 用这个)
+        env:
+          THEOS: ${{ runner.home }}/theos-roothide
+        run: |
+          set -e
+          "$(brew --prefix make)/bin/gmake" clean package FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=roothide
+          cp packages/*_iphoneos-arm*.deb LunarBarX.roothide.deb
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: LunarBarX-deb
+          path: |
+            LunarBarX.rootless.deb
+            LunarBarX.roothide.deb
+          if-no-files-found: error

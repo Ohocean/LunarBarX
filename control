@@ -1,0 +1,9 @@
+Package: com.local.lunarbarx
+Name: LunarBarX
+Version: 0.1.0
+Architecture: iphoneos-arm
+Description: 状态栏时间美化：农历/日期/星期、双行布局（面向 Relaxin / RootHide / rootless 越狱，iOS 17）
+Maintainer: zhaidong
+Author: WorkBuddy
+Section: Tweaks
+Depends: mobilesubstrate
